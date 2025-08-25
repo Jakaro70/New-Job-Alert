@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LinkedIn Job Quick Links – Zaq</title>
+  <style>
+    :root { --bg:#0b0e14; --card:#141a22; --ink:#e6edf3; --muted:#98a2b3; --accent:#4f46e5; --accent2:#16a34a; --chip:#1f2937; }
+    html,body { margin:0; height:100%; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color:var(--ink); background:linear-gradient(180deg,#0b0e14,#0b1120 60%); }
+    .wrap { max-width: 780px; margin: 0 auto; padding: 24px; }
+    .card { background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); backdrop-filter: blur(8px); }
+    h1 { font-size: 1.25rem; margin: 0 0 6px; }
+    .sub { color: var(--muted); font-size: .9rem; margin-bottom: 14px; }
+    .row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 560px){ .row{ grid-template-columns: 1fr 1fr; } }
+    .ctl { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin: 10px 0 6px; }
+    .chip { background: var(--chip); border:1px solid rgba(255,255,255,0.08); padding:8px 10px; border-radius:12px; display:inline-flex; gap:8px; align-items:center; }
+    select, button { appearance:none; border-radius:12px; border:1px solid rgba(255,255,255,0.12); color:var(--ink); background:#0f172a; padding:10px 12px; font-size: 0.95rem; }
+    button.cta { background: var(--accent); border:none; font-weight:600; }
+    button.alt { background: var(--accent2); border:none; font-weight:600; }
+    .list { display:grid; gap:10px; margin-top: 10px; }
+    .item { background: var(--card); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:14px; display:flex; flex-direction:column; gap:10px; }
+    .item h3 { margin:0; font-size:1rem; }
+    .item a { color:#93c5fd; text-decoration:none; word-break: break-all; }
+    .small { color:var(--muted); font-size:.85rem; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>LinkedIn Job Quick Links</h1>
+      <div class="sub">Tap a button to open a fresh LinkedIn search with your filters. Save this page to your phone’s Home Screen for 1‑tap access.</div>
+
+      <div class="ctl">
+        <span class="chip">Time window
+          <select id="minutes">
+            <option value="3600" selected>Last 60 min</option>
+            <option value="1800">Last 30 min</option>
+            <option value="14400">Last 4 hours</option>
+            <option value="86400">Last 24 hours</option>
+          </select>
+        </span>
+        <span class="chip">Keywords
+          <select id="role">
+            <option value="UI/UX Designer OR Senior UI/UX Designer OR Product Designer OR Senior Product Designer" selected>UI/UX & Product Designer</option>
+            <option value="Senior Product Designer">Senior Product Designer</option>
+            <option value="Design System OR Design Systems">Design Systems</option>
+            <option value="UX Researcher">UX Researcher</option>
+          </select>
+        </span>
+      </div>
+
+      <div class="row">
+        <div class="item">
+          <h3>🇩🇪 Germany — newest first</h3>
+          <div class="actions">
+            <button class="cta" onclick="openLink('de')">Open in LinkedIn</button>
+            <button onclick="copyLink('de')">Copy URL</button>
+          </div>
+          <div class="small" id="deUrl"></div>
+        </div>
+
+        <div class="item">
+          <h3>🇪🇺 Remote / Hybrid in Europe (ex‑DE preferred)</h3>
+          <div class="actions">
+            <button class="alt" onclick="openLink('eu')">Open in LinkedIn</button>
+            <button onclick="copyLink('eu')">Copy URL</button>
+          </div>
+          <div class="small" id="euUrl"></div>
+        </div>
+
+        <div class="item">
+          <h3>🌏 APAC — Remote/Hybrid (by country)</h3>
+          <div class="ctl" style="margin:0 0 6px">
+            <span class="chip">Country
+              <select id="apacCountry">
+                <option>Singapore</option>
+                <option>Malaysia</option>
+                <option>Indonesia</option>
+                <option>Thailand</option>
+                <option>Vietnam</option>
+                <option>Japan</option>
+                <option>South Korea</option>
+                <option>Taiwan</option>
+                <option>China</option>
+              </select>
+            </span>
+          </div>
+          <div class="actions">
+            <button class="alt" onclick="openLink('apac')">Open in LinkedIn</button>
+            <button onclick="copyLink('apac')">Copy URL</button>
+          </div>
+          <div class="small" id="apacUrl"></div>
+        </div>
+      </div>
+
+      <div class="item" style="margin-top:12px">
+        <h3>Notes</h3>
+        <div class="small">• Links use <code>f_TPR</code> (time posted) and <code>sortBy=DD</code> (newest).<br>
+        • Language grouping isn’t supported by LinkedIn filters; check titles/descriptions to prioritize English-first roles.<br>
+        • You can tweak keywords and time window above; URLs update instantly.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const enc = encodeURIComponent;
+    const mkUrl = (scope, extra = {}) => {
+      const minutes = document.getElementById('minutes').value;
+      const role = document.getElementById('role').value;
+      const q = enc(role);
+      const params = new URLSearchParams();
+      params.set('keywords', q);
+      params.set('f_TPR', 'r' + minutes);
+      params.set('sortBy', 'DD');
+
+      if (scope === 'de') {
+        params.set('location', 'Germany');
+      } else if (scope === 'eu') {
+        params.set('location', 'Europe');
+        params.set('f_WT', '2,3'); // Remote (2) + Hybrid (3)
+      } else if (scope === 'apac') {
+        params.set('location', extra.country || 'Singapore');
+        params.set('f_WT', '2,3');
+      }
+      return `https://www.linkedin.com/jobs/search/?${params.toString()}`;
+    };
+
+    function refreshUrls(){
+      const de = mkUrl('de');
+      const eu = mkUrl('eu');
+      const apac = mkUrl('apac', { country: document.getElementById('apacCountry').value });
+      document.getElementById('deUrl').textContent = de;
+      document.getElementById('euUrl').textContent = eu;
+      document.getElementById('apacUrl').textContent = apac;
+      document.getElementById('deUrl').dataset.href = de;
+      document.getElementById('euUrl').dataset.href = eu;
+      document.getElementById('apacUrl').dataset.href = apac;
+    }
+
+    function openLink(scope){
+      let url;
+      if(scope==='de') url = document.getElementById('deUrl').dataset.href;
+      else if(scope==='eu') url = document.getElementById('euUrl').dataset.href;
+      else if(scope==='apac') url = document.getElementById('apacUrl').dataset.href;
+      window.open(url, '_blank');
+    }
+
+    async function copyLink(scope){
+      let url;
+      if(scope==='de') url = document.getElementById('deUrl').dataset.href;
+      else if(scope==='eu') url = document.getElementById('euUrl').dataset.href;
+      else if(scope==='apac') url = document.getElementById('apacUrl').dataset.href;
+      try{ await navigator.clipboard.writeText(url); alert('Copied!'); } catch(e){ prompt('Copy URL:', url); }
+    } catch(e){ prompt('Copy URL:', url); }
+    }
+
+    document.getElementById('minutes').addEventListener('change', refreshUrls);
+    document.getElementById('role').addEventListener('change', refreshUrls);
+
+    // APAC country select listener
+    document.getElementById('apacCountry').addEventListener('change', refreshUrls);
+
+    refreshUrls();
+  </script>
+</body>
+</html>
