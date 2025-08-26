@@ -27,14 +27,10 @@
   </style>
 </head>
 <body>
-<h1>Welcome to my job alert page</h1>
-
-<p>Click here to open Google:</p>
-<a href="https://google.com" target="_blank">Go to Google</a>
   <div class="wrap">
     <div class="card">
       <h1>LinkedIn Job Quick Links</h1>
-      <div class="sub">Tap a button to open a fresh LinkedIn search with your filters. Save this page to your phone’s Home Screen for 1‑tap access.</div>
+      <div class="sub">Tap a button to open a fresh LinkedIn search with your filters. Save this page to your phone’s Home Screen for 1-tap access.</div>
 
       <div class="ctl">
         <span class="chip">Time window
@@ -66,7 +62,7 @@
         </div>
 
         <div class="item">
-          <h3>🇪🇺 Remote / Hybrid in Europe (ex‑DE preferred)</h3>
+          <h3>🇪🇺 Remote / Hybrid in Europe (ex-DE preferred)</h3>
           <div class="actions">
             <button class="alt" onclick="openLink('eu')">Open in LinkedIn</button>
             <button onclick="copyLink('eu')">Copy URL</button>
@@ -131,49 +127,49 @@
       return `https://www.linkedin.com/jobs/search/?${params.toString()}`;
     };
 
-    function refreshUrls(){
-      const de = mkUrl('de');
-      const eu = mkUrl('eu');
-      const apac = mkUrl('apac', { country: document.getElementById('apacCountry').value });
-      document.getElementById('deUrl').textContent = de;
-      document.getElementById('euUrl').textContent = eu;
-      document.getElementById('apacUrl').textContent = apac;
-      document.getElementById('deUrl').dataset.href = de;
-      document.getElementById('euUrl').dataset.href = eu;
-      document.getElementById('apacUrl').dataset.href = apac;
-    }
-
     function openLink(scope){
       let url;
       if(scope==='de') url = document.getElementById('deUrl').dataset.href;
       else if(scope==='eu') url = document.getElementById('euUrl').dataset.href;
       else if(scope==='apac') url = document.getElementById('apacUrl').dataset.href;
-      window.open(url, '_blank');
+      if(url) window.open(url, '_blank');
     }
 
     async function copyLink(scope){
-  let url;
-  if(scope==='de') url = document.getElementById('deUrl').dataset.href;
-  else if(scope==='eu') url = document.getElementById('euUrl').dataset.href;
-  else if(scope==='apac') url = document.getElementById('apacUrl').dataset.href;
+      let url;
+      if(scope==='de') url = document.getElementById('deUrl').dataset.href;
+      else if(scope==='eu') url = document.getElementById('euUrl').dataset.href;
+      else if(scope==='apac') url = document.getElementById('apacUrl').dataset.href;
 
-  try {
-    await navigator.clipboard.writeText(url);
-    alert('Copied!');
-  } catch(e) {
-    // fallback if clipboard API fails
-    prompt('Copy URL:', url);
-  }
-}
+      try {
+        await navigator.clipboard.writeText(url);
+        alert('Copied!');
+      } catch(e) {
+        // fallback
+        prompt('Copy URL:', url);
+      }
+    }
 
+    // Run refreshUrls only after DOM is loaded
+    window.onload = () => {
+      function refreshUrls(){
+        const de = mkUrl('de');
+        const eu = mkUrl('eu');
+        const apac = mkUrl('apac', { country: document.getElementById('apacCountry').value });
+        document.getElementById('deUrl').textContent = de;
+        document.getElementById('euUrl').textContent = eu;
+        document.getElementById('apacUrl').textContent = apac;
+        document.getElementById('deUrl').dataset.href = de;
+        document.getElementById('euUrl').dataset.href = eu;
+        document.getElementById('apacUrl').dataset.href = apac;
+      }
 
-    document.getElementById('minutes').addEventListener('change', refreshUrls);
-    document.getElementById('role').addEventListener('change', refreshUrls);
+      document.getElementById('minutes').addEventListener('change', refreshUrls);
+      document.getElementById('role').addEventListener('change', refreshUrls);
+      document.getElementById('apacCountry').addEventListener('change', refreshUrls);
 
-    // APAC country select listener
-    document.getElementById('apacCountry').addEventListener('change', refreshUrls);
-
-    refreshUrls();
+      refreshUrls(); // run once on load
+    };
   </script>
 </body>
 </html>
