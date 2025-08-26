@@ -27,6 +27,10 @@
   </style>
 </head>
 <body>
+<h1>Welcome to my job alert page</h1>
+
+<p>Click here to open Google:</p>
+<a href="https://google.com" target="_blank">Go to Google</a>
   <div class="wrap">
     <div class="card">
       <h1>LinkedIn Job Quick Links</h1>
