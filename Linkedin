@@ -152,13 +152,20 @@
     }
 
     async function copyLink(scope){
-      let url;
-      if(scope==='de') url = document.getElementById('deUrl').dataset.href;
-      else if(scope==='eu') url = document.getElementById('euUrl').dataset.href;
-      else if(scope==='apac') url = document.getElementById('apacUrl').dataset.href;
-      try{ await navigator.clipboard.writeText(url); alert('Copied!'); } catch(e){ prompt('Copy URL:', url); }
-    } catch(e){ prompt('Copy URL:', url); }
-    }
+  let url;
+  if(scope==='de') url = document.getElementById('deUrl').dataset.href;
+  else if(scope==='eu') url = document.getElementById('euUrl').dataset.href;
+  else if(scope==='apac') url = document.getElementById('apacUrl').dataset.href;
+
+  try {
+    await navigator.clipboard.writeText(url);
+    alert('Copied!');
+  } catch(e) {
+    // fallback if clipboard API fails
+    prompt('Copy URL:', url);
+  }
+}
+
 
     document.getElementById('minutes').addEventListener('change', refreshUrls);
     document.getElementById('role').addEventListener('change', refreshUrls);
