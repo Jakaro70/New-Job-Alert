@@ -105,71 +105,67 @@
   </div>
 
   <script>
-    const enc = encodeURIComponent;
-    const mkUrl = (scope, extra = {}) => {
-      const minutes = document.getElementById('minutes').value;
-      const role = document.getElementById('role').value;
-      const q = enc(role);
-      const params = new URLSearchParams();
-      params.set('keywords', q);
-      params.set('f_TPR', 'r' + minutes);
-      params.set('sortBy', 'DD');
+  const enc = encodeURIComponent;
 
-      if (scope === 'de') {
-        params.set('location', 'Germany');
-      } else if (scope === 'eu') {
-        params.set('location', 'Europe');
-        params.set('f_WT', '2,3'); // Remote (2) + Hybrid (3)
-      } else if (scope === 'apac') {
-        params.set('location', extra.country || 'Singapore');
-        params.set('f_WT', '2,3');
-      }
-      return `https://www.linkedin.com/jobs/search/?${params.toString()}`;
-    };
+  const mkUrl = (scope, extra = {}) => {
+    const minutes = document.getElementById('minutes').value;
+    const role = document.getElementById('role').value;
+    const params = new URLSearchParams();
+    params.set('keywords', enc(role));
+    params.set('f_TPR', 'r' + minutes);
+    params.set('sortBy', 'DD');
 
-    function openLink(scope){
-      let url;
-      if(scope==='de') url = document.getElementById('deUrl').dataset.href;
-      else if(scope==='eu') url = document.getElementById('euUrl').dataset.href;
-      else if(scope==='apac') url = document.getElementById('apacUrl').dataset.href;
-      if(url) window.open(url, '_blank');
+    if (scope === 'de') {
+      params.set('location', 'Germany');
+    } else if (scope === 'eu') {
+      params.set('location', 'Europe');
+      params.set('f_WT', '2,3'); // Remote (2) + Hybrid (3)
+    } else if (scope === 'apac') {
+      params.set('location', extra.country || 'Singapore');
+      params.set('f_WT', '2,3');
     }
+    return `https://www.linkedin.com/jobs/search/?${params.toString()}`;
+  };
 
-    async function copyLink(scope){
-      let url;
-      if(scope==='de') url = document.getElementById('deUrl').dataset.href;
-      else if(scope==='eu') url = document.getElementById('euUrl').dataset.href;
-      else if(scope==='apac') url = document.getElementById('apacUrl').dataset.href;
+  function openLink(scope){
+    let url;
+    if (scope === 'de') url = mkUrl('de');
+    else if (scope === 'eu') url = mkUrl('eu');
+    else if (scope === 'apac') url = mkUrl('apac', { country: document.getElementById('apacCountry').value });
 
-      try {
-        await navigator.clipboard.writeText(url);
-        alert('Copied!');
-      } catch(e) {
-        // fallback
-        prompt('Copy URL:', url);
-      }
+    // Try new tab; if blocked, use same tab
+    const w = window.open(url, '_blank', 'noopener');
+    if (!w) window.location.href = url;
+  }
+
+  async function copyLink(scope){
+    let url;
+    if (scope === 'de') url = mkUrl('de');
+    else if (scope === 'eu') url = mkUrl('eu');
+    else if (scope === 'apac') url = mkUrl('apac', { country: document.getElementById('apacCountry').value });
+
+    try {
+      await navigator.clipboard.writeText(url);
+      alert('Copied!');
+    } catch(e) {
+      prompt('Copy URL:', url);
     }
+  }
 
-    // Run refreshUrls only after DOM is loaded
-    window.onload = () => {
-      function refreshUrls(){
-        const de = mkUrl('de');
-        const eu = mkUrl('eu');
-        const apac = mkUrl('apac', { country: document.getElementById('apacCountry').value });
-        document.getElementById('deUrl').textContent = de;
-        document.getElementById('euUrl').textContent = eu;
-        document.getElementById('apacUrl').textContent = apac;
-        document.getElementById('deUrl').dataset.href = de;
-        document.getElementById('euUrl').dataset.href = eu;
-        document.getElementById('apacUrl').dataset.href = apac;
-      }
+  // Only for showing the URLs under each section (visual feedback)
+  function renderPreview(){
+    document.getElementById('deUrl').textContent   = mkUrl('de');
+    document.getElementById('euUrl').textContent   = mkUrl('eu');
+    document.getElementById('apacUrl').textContent = mkUrl('apac', { country: document.getElementById('apacCountry').value });
+  }
 
-      document.getElementById('minutes').addEventListener('change', refreshUrls);
-      document.getElementById('role').addEventListener('change', refreshUrls);
-      document.getElementById('apacCountry').addEventListener('change', refreshUrls);
+  window.onload = () => {
+    document.getElementById('minutes').addEventListener('change', renderPreview);
+    document.getElementById('role').addEventListener('change', renderPreview);
+    document.getElementById('apacCountry').addEventListener('change', renderPreview);
+    renderPreview(); // initial preview
+  };
+</script>
 
-      refreshUrls(); // run once on load
-    };
-  </script>
 </body>
 </html>
